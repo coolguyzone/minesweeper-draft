@@ -1,6 +1,8 @@
 import * as React from "react"
 import type { HeadFC, PageProps } from "gatsby"
 
+const useState = React.useState;
+
 const pageStyles = {
   color: "#232129",
   padding: 96,
@@ -137,53 +139,115 @@ const links = [
 ]
 
 const IndexPage: React.FC<PageProps> = () => {
+  const [player1Name, setPlayer1Name] = useState('error');
+  const [player2Name, setPlayer2Name] = useState('error');
+  const [player3Name, setPlayer3Name] = useState('error');
+  const [player4Name, setPlayer4Name] = useState('error');
+
+  const [nameArray, setNameArray] = useState(['a','b','c','d']);
+
+  const [player1PicksRemaining, setPlayer1PicksRemaining] = useState(36);
+  const [player2PicksRemaining, setPlayer2PicksRemaining] = useState(36);
+  const [player3PicksRemaining, setPlayer3PicksRemaining] = useState(36);
+  const [player4PicksRemaining, setPlayer4PicksRemaining] = useState(36);
+
+  const [playerPicksArray, setPlayerPicksArray] = useState([36,36,36,36])
+
+  const [player1PicksThisRound, setPlayer1PicksThisRound] = useState(9);
+  const [player2PicksThisRound, setPlayer2PicksThisRound] = useState(9);
+  const [player3PicksThisRound, setPlayer3PicksThisRound] = useState(9);
+  const [player4PicksThisRound, setPlayer4PicksThisRound] = useState(9);
+
+  const [playerPicksThisRoundArray, setPlayerPicksThisRoundArray] = useState([9,9,9,9]);
+
+
+  const [activePlayer, setActivePlayer] = useState(0);
+  
+
+
+  const setPlayerNames =(name1: String, name2: String, name3: String, name4: String) => {
+    if(name1 && name2 && name3 && name4) {
+
+  const array = [name1, name2, name3, name4];
+  setNameArray(array);
+  console.log("namearray", nameArray);
+  return
+    }
+    else {
+      return;
+    }
+    
+  }
+
+  const cardPick = (playerNumber: number) => {
+    setPlayerPicksArray(playerPicksArray.map((ele, i)=>{ 
+      console.log('i', i);
+      console.log('playernumber', playerNumber);
+      console.log('boolean', i === playerNumber);
+      if (i === playerNumber) {
+        return ele -1;
+      } else {
+        return ele;
+      }
+    }));
+    setPlayerPicksThisRoundArray( playerPicksThisRoundArray.map((ele, i)=>{ 
+      if (i=== playerNumber) {
+        return ele -1;
+      } else {
+        return ele;
+      }
+    }))
+    console.log('playernumber', playerNumber);
+    let nextActivePlayer;
+    if (activePlayer === 3) {
+      nextActivePlayer = 0;
+    } else {
+      nextActivePlayer = activePlayer + 1;
+    }
+    setActivePlayer(nextActivePlayer);
+    console.log('activeplayer', activePlayer);
+    console.log('namearray', nameArray)
+  }
+
   return (
     <main style={pageStyles}>
       <h1 style={headingStyles}>
-        Congratulations
-        <br />
-        <span style={headingAccentStyles}>— you just made a Gatsby site! 🎉🎉🎉</span>
+        Minesweeper Draft Tracker
       </h1>
-      <p style={paragraphStyles}>
-        Edit <code style={codeStyles}>src/pages/index.tsx</code> to see this page
-        update in real-time. 😎
-      </p>
-      <ul style={doclistStyles}>
-        {docLinks.map(doc => (
-          <li key={doc.url} style={docLinkStyle}>
-            <a
-              style={linkStyle}
-              href={`${doc.url}?utm_source=starter&utm_medium=ts-docs&utm_campaign=minimal-starter-ts`}
-            >
-              {doc.text}
-            </a>
-          </li>
-        ))}
-      </ul>
-      <ul style={listStyles}>
-        {links.map(link => (
-          <li key={link.url} style={{ ...listItemStyles, color: link.color }}>
-            <span>
-              <a
-                style={linkStyle}
-                href={`${link.url}?utm_source=starter&utm_medium=start-page&utm_campaign=minimal-starter-ts`}
-              >
-                {link.text}
-              </a>
-              {link.badge && (
-                <span style={badgeStyle} aria-label="New Badge">
-                  NEW!
-                </span>
-              )}
-              <p style={descriptionStyle}>{link.description}</p>
-            </span>
-          </li>
-        ))}
-      </ul>
-      <img
-        alt="Gatsby G Logo"
-        src="data:image/svg+xml,%3Csvg width='24' height='24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 2a10 10 0 110 20 10 10 0 010-20zm0 2c-3.73 0-6.86 2.55-7.75 6L14 19.75c3.45-.89 6-4.02 6-7.75h-5.25v1.5h3.45a6.37 6.37 0 01-3.89 4.44L6.06 9.69C7 7.31 9.3 5.63 12 5.63c2.13 0 4 1.04 5.18 2.65l1.23-1.06A7.959 7.959 0 0012 4zm-8 8a8 8 0 008 8c.04 0 .09 0-8-8z' fill='%23639'/%3E%3C/svg%3E"
-      />
+      <div>
+        <span>Enter the names of each player:</span>
+        <div><textarea id="player1-name"></textarea></div>
+        <div><textarea id="player2-name"></textarea></div>
+        <div><textarea id="player3-name"></textarea></div>
+        <div> <textarea id="player4-name"></textarea></div>              
+      </div>
+      <div style={{marginTop: '20px'}}><button id="submitPlayerNames" onClick={()=> {
+        let name1 = document.querySelector('#player1-name')?.value;
+        let name2 = document.querySelector('#player2-name')?.value;
+        let name3 = document.querySelector('#player3-name')?.value;
+        let name4 = document.querySelector('#player4-name')?.value;
+        setPlayerNames(name1, name2, name3, name4);
+        console.log(name1)
+      }}>Submit</button></div>
+
+      <div style={{marginTop: '20px'}}>
+        <h2>
+          It is {nameArray[activePlayer]}'s turn!
+        </h2>
+        <h2>
+        {nameArray[activePlayer]} has {playerPicksThisRoundArray[activePlayer]} picks left this round, and {playerPicksArray[activePlayer]} total picks left. {activePlayer}
+        </h2>
+      </div>
+
+      <div style={{marginTop: '20px'}}>
+        <button onClick={() => {
+          console.log('activeplayer', activePlayer);
+          cardPick(activePlayer)
+        }}>
+          {nameArray[activePlayer]} has picked
+        </button>
+        </div>
+     
     </main>
   )
 }
